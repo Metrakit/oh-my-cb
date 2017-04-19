@@ -1,0 +1,50 @@
+{
+  "name": "electron-typescript-boilerplate",
+  "version": "0.0.1",
+  "description": "Electron with typescript boilerplate",
+  "main": "build/Main.js",
+  "scripts": {
+    "start": "cross-env ELECTRON_ENV=development && gulp build && electron .",
+    "watch": "cross-env ELECTRON_ENV=development && gulp watch",
+    "postinstall": "npm install -g typescript && npm install -g electron && npm install -g electron-packager",
+    "package": "cross-env ELECTRON_ENV=production && gulp build && electron-packager . --all --prune --overwrite --out=package --icon=resources/icon",
+    "package-darwin": "cross-env ELECTRON_ENV=production && gulp build && electron-packager . --platform=darwin --prune --overwrite --out=package --icon=resources/icon.icns",
+    "package-linux": "cross-env ELECTRON_ENV=production && gulp build && electron-packager . --platform=linux --prune --overwrite --out=package --icon=resources/icon.ico",
+    "package-windows": "cross-env ELECTRON_ENV=production && gulp build && electron-packager . --platform=win32 --prune --overwrite --out=package --icon=resources/icon.ico"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/metrakit/electron-typescript-boilerplate.git"
+  },
+  "author": "Metrakit",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/metrakit/electron-typescript-boilerplate/issues"
+  },
+  "homepage": "https://github.com/metrakit/electron-typescript-boilerplate#readme",
+  "devDependencies": {
+    "@types/electron": "^1.4.35",
+    "babel-core": "^6.24.1",
+    "babel-loader": "^6.4.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2016": "^6.24.1",
+    "cross-env": "^4.0.0",
+    "css-loader": "^0.28.0",
+    "devtron": "^1.4.0",
+    "electron": "^1.4.16",
+    "electron-debug": "^1.1.0",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.1.6",
+    "sass-loader": "^6.0.3",
+    "ts-loader": "^2.0.3",
+    "typescript": "^2.2.2",
+    "vue-loader": "^11.3.4",
+    "vue-template-compiler": "^2.2.6",
+    "webpack": "^2.4.1"
+  },
+  "dependencies": {
+    "vue": "^2.2.6",
+    "electron-connect": "^0.6.1",
+    "electron-debug": "^1.1.0"
+  }
+}
