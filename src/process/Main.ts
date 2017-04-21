@@ -30,7 +30,7 @@ class Main {
             skipTaskbar: true,
             minimizable: false,
             closable: false,
-            // resizable: false,
+            resizable: false,
             movable: false
         });
         Main.mainWindow.loadURL(`file://${Main.resourcesDir}/app.html`);
