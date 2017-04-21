@@ -24,10 +24,20 @@ class Main {
         Main.mainWindow = new Main.BrowserWindow({
             width: 300,
             height: 400,
-            show: false
+            show: false,
+            frame: false,
+            titleBarStyle: "hidden",
+            skipTaskbar: true,
+            minimizable: false,
+            closable: false,
+            // resizable: false,
+            movable: false
         });
         Main.mainWindow.loadURL(`file://${Main.resourcesDir}/app.html`);
         Main.mainWindow.on("closed", Main.onClose);
+        Main.mainWindow.on("move", () => {
+            Main.mainWindow.show();
+        });
 
         if (process.env.ELECTRON_ENV === "development") {
             client.create(Main.mainWindow);
@@ -39,14 +49,11 @@ class Main {
             Main.mainWindow.hide();
         });
 
-        let cursorPos = screen.getCursorScreenPoint();
-        Main.mainWindow.setPosition(cursorPos.x, cursorPos.y);
-
         globalShortcut.register("CommandOrControl+Alt+V", () => {
             if (Main.mainWindow.isVisible()) {
                 Main.mainWindow.hide();
             } else {
-                Main.mainWindow.show();
+                Main.moveWindow();
             }
         });
 
@@ -54,6 +61,23 @@ class Main {
             Main.mainWindow.hide();
         });
 
+        electronLocalshortcut.register(Main.mainWindow, "Up", () => {
+            Main.mainWindow.webContents.send("up-action");
+        });
+
+        electronLocalshortcut.register(Main.mainWindow, "Down", () => {
+            Main.mainWindow.webContents.send("down-action");
+        });
+
+        electronLocalshortcut.register(Main.mainWindow, "Enter", () => {
+            Main.mainWindow.webContents.send("enter-action");
+        });
+
+    }
+
+    private static moveWindow(): void {
+        let cursorPos = screen.getCursorScreenPoint();
+        Main.mainWindow.setPosition(cursorPos.x, cursorPos.y);
     }
 
     private static checkClipboard(): void {
@@ -75,7 +99,7 @@ class Main {
 }
 
 if (process.env.ELECTRON_ENV === "development") {
-    require("electron-debug")({ showDevTools: true });
+    require("electron-debug")({ showDevTools: "undocked" });
 }
 
 Main.main(app, BrowserWindow);
