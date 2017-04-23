@@ -10,6 +10,9 @@ class Main {
     static resourcesDir: string;
     static lastText: string;
 
+    static width: number;
+    static height: number;
+
     private static onWindowAllClosed(): void {
         if (process.platform !== "darwin") {
             Main.application.quit();
@@ -21,9 +24,10 @@ class Main {
     }
 
     private static onReady(): void {
+        console.log(Main.width);
         Main.mainWindow = new Main.BrowserWindow({
-            width: 300,
-            height: 400,
+            width: Main.width,
+            height: Main.height,
             show: false,
             frame: false,
             titleBarStyle: "hidden",
@@ -77,7 +81,22 @@ class Main {
 
     private static moveWindow(): void {
         let cursorPos = screen.getCursorScreenPoint();
-        Main.mainWindow.setPosition(cursorPos.x, cursorPos.y);
+        let display = screen.getDisplayNearestPoint(cursorPos);
+        let displaySize = display.size;
+        let posX = cursorPos.x;
+        let posY = cursorPos.y;
+        let diffWidth = displaySize.width - posX;
+        let diffHeight = displaySize.height - posY;
+
+        if (diffWidth < Main.width) {
+            posX = posX - (Main.width - diffWidth);
+        }
+
+        if (diffHeight < Main.height) {
+            posY = posY - (Main.height - diffHeight);
+        }
+
+        Main.mainWindow.setPosition(posX, posY);
     }
 
     private static checkClipboard(): void {
@@ -89,6 +108,8 @@ class Main {
     }
 
     static main(app: Electron.App, browserWindow: typeof BrowserWindow): void {
+        Main.width = 300;
+        Main.height = 400;
         Main.resourcesDir = `${__dirname}/../resources`;
         Main.BrowserWindow = browserWindow;
         Main.application = app;
