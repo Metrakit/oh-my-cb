@@ -44,9 +44,11 @@
     "webpack": "^2.4.1"
   },
   "dependencies": {
+    "electron-config": "^0.2.1",
     "electron-connect": "^0.6.1",
     "electron-debug": "^1.1.0",
     "electron-localshortcut": "^1.1.1",
-    "vue": "^2.2.6"
+    "vue": "^2.2.6",
+    "vue-router": "^2.4.0"
   }
 }

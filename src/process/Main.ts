@@ -34,7 +34,7 @@ class Main {
             skipTaskbar: true,
             minimizable: false,
             closable: false,
-            resizable: false,
+            resizable: (process.env.ELECTRON_ENV !== "production"),
             movable: false
         });
         Main.mainWindow.loadURL(`file://${Main.resourcesDir}/app.html`);
