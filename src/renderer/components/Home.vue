@@ -62,7 +62,8 @@
                 this.moveToIndex();
             },
             moveToIndex() {
-                window.location.href = "#index-" + this.indexSelected;
+                // bug
+                // window.location.href = "#index-" + this.indexSelected;
             }
         },
         beforeMount() {
