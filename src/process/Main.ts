@@ -24,7 +24,6 @@ class Main {
     }
 
     private static onReady(): void {
-        console.log(Main.width);
         Main.mainWindow = new Main.BrowserWindow({
             width: Main.width,
             height: Main.height,
@@ -33,7 +32,7 @@ class Main {
             titleBarStyle: "hidden",
             skipTaskbar: true,
             minimizable: false,
-            closable: false,
+            closable: (process.env.ELECTRON_ENV !== "production"),
             resizable: (process.env.ELECTRON_ENV !== "production"),
             movable: false
         });
@@ -82,11 +81,12 @@ class Main {
     private static moveWindow(): void {
         let cursorPos = screen.getCursorScreenPoint();
         let display = screen.getDisplayNearestPoint(cursorPos);
-        let displaySize = display.size;
+
+        let bounds = display.bounds;
         let posX = cursorPos.x;
         let posY = cursorPos.y;
-        let diffWidth = displaySize.width - posX;
-        let diffHeight = displaySize.height - posY;
+        let diffWidth = (bounds.width + bounds.x) - cursorPos.x;
+        let diffHeight = (bounds.height + bounds.y) - cursorPos.y;
 
         if (diffWidth < Main.width) {
             posX = posX - (Main.width - diffWidth);

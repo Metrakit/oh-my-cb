@@ -34,7 +34,6 @@
         methods: {
             addText(text) {
                 if (this.texts.length >= this.maxLength) {
-                    console.log("test");
                     Vue.delete(this.texts, (this.texts.length-1));
                 }
                 this.texts.unshift(text);
@@ -69,7 +68,9 @@
         beforeMount() {
             this.texts = [];
             ipcRenderer.on("add-text", (event, text) => {
-                this.addText(text);
+                if (text.length) {
+                    this.addText(text);
+                }
             });
             ipcRenderer.on("up-action", (event, arg) => {
                 this.selectIndex(false);
