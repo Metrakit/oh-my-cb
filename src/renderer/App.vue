@@ -33,6 +33,15 @@
 
 <style lang="sass">
     @import "../../styles/photon/photon";
+    .form-group.error {
+        input {
+            border-color: $negative-color;
+            box-shadow: 0 0 0 3px $negative-color;
+        }
+        label {
+            color: $negative-color;
+        }
+    }
     header {
         padding: 2px;
         svg.settings {

@@ -82,11 +82,12 @@ class Main {
         let cursorPos = screen.getCursorScreenPoint();
         let display = screen.getDisplayNearestPoint(cursorPos);
 
+        let taskBarSize = 45;
         let bounds = display.bounds;
         let posX = cursorPos.x;
         let posY = cursorPos.y;
         let diffWidth = (bounds.width + bounds.x) - cursorPos.x;
-        let diffHeight = (bounds.height + bounds.y) - cursorPos.y;
+        let diffHeight = (bounds.height + bounds.y - taskBarSize) - cursorPos.y;
 
         if (diffWidth < Main.width) {
             posX = posX - (Main.width - diffWidth);
