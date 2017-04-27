@@ -32,9 +32,11 @@ class Main {
             titleBarStyle: "hidden",
             skipTaskbar: true,
             minimizable: false,
+            maximizable: false,
             closable: (process.env.ELECTRON_ENV !== "production"),
             resizable: (process.env.ELECTRON_ENV !== "production"),
-            movable: false
+            movable: false,
+            alwaysOnTop: true
         });
         Main.mainWindow.loadURL(`file://${Main.resourcesDir}/app.html`);
         Main.mainWindow.on("closed", Main.onClose);
@@ -47,10 +49,19 @@ class Main {
         }
 
         setInterval(() => Main.checkClipboard(), 1000);
+
+        // autohide window if not focused
+        setInterval(() => {
+            if ( ! Main.mainWindow.isFocused() && Main.mainWindow.isVisible()) {
+                Main.mainWindow.hide();
+            }
+        }, 500);
+
         ipcMain.on("copy", (event, arg) => {
             clipboard.writeText(arg);
             Main.mainWindow.hide();
         });
+
 
         globalShortcut.register("CommandOrControl+Alt+V", () => {
             if (Main.mainWindow.isVisible()) {
