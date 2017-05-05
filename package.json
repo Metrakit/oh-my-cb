@@ -4,7 +4,6 @@
   "description": "Electron with typescript boilerplate",
   "main": "build/Main.js",
   "scripts": {
-    "postinstall": "npm install -g typescript && npm install -g electron && npm install -g electron-packager",
     "start": "gulp",
     "watch": "gulp watch",
     "package": "gulp package",
