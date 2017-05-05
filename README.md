@@ -4,8 +4,6 @@
 
 `npm install`
 
-`npm run postInstall`
-
 ## Build executables
 
 - All executables :
