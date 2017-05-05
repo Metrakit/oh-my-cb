@@ -1,4 +1,4 @@
-# Electron typescript boilerplate
+# OhMyCB
 
 ## Setup
 
