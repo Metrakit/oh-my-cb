@@ -6,7 +6,9 @@ var gulp = require("gulp"),
     packager = require('electron-packager'),
     env = require('gulp-env'),
     pck = require('./package.json'),
-    winInstaller = require('electron-winstaller');
+    winInstaller = require('electron-winstaller'),
+    createDMG = require('electron-installer-dmg');
+    // debianInstaller = require('electron-installer-debian');
 
 var tsProject = ts.createProject("tsconfig.json");
 
@@ -39,11 +41,42 @@ function buildWinInstaller(arch) {
         title: metadata.ProductName,
         setupIcon: "resources/icon.ico",
         skipUpdateIcon: true,
-        noMsi: true
+        noMsi: true,
+        loadingGif: `resources/loader-installer.gif`
     }).then(function() {
         console.log(`App installer builded for Windows ${arch}`);
     });
 }
+
+function buildDarwinInstaller() {
+    console.log(`Building installer for Darwin x64`);
+    return createDMG({
+        name: pck.name,
+        appPath: `package/${pck.name}-darwin-x64/${pck.name}.app`,
+        icon: "resources/icon.ico",
+        overwrite: true,
+        out: `installer/${pck.name}-darwin}`
+    }, function(err) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(`Installer builded for Darwin x64`);
+        }
+    });
+}
+
+function buildDebianInstaller() {
+    console.log(`Building installer for Debian x64`);
+    return debianInstaller({
+        src: `package/${pck.name}-linux-x64`,
+        arch: 'amd64',
+        dest: `installer/${pck.name}-linux-x64}`
+    }, function(err) {
+        console.log(`Installer builded for Debian x64`);
+    });
+}
+
+
 
 gulp.task("default", ["build"], function() {
     env.set({ ELECTRON_ENV: "development" });
@@ -91,6 +124,7 @@ gulp.task('package-linux', ["build"], function () {
   pckOptions.platform = "linux";
   packager(pckOptions, function done_callback (err, appPaths) {
       console.log("App packaged for Linux !");
+    //   buildDebianInstaller();
   });
 });
 
@@ -100,6 +134,7 @@ gulp.task('package-darwin', ["build"], function () {
   pckOptions.platform = "darwin";
   packager(pckOptions, function done_callback (err, appPaths) {
       console.log("App packaged for OSX !");
+      buildDarwinInstaller();
   });
 });
 

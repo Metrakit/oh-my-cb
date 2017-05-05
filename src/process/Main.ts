@@ -1,6 +1,8 @@
 import { client } from "electron-connect";
 import { app, BrowserWindow, clipboard, ipcMain, screen, globalShortcut } from "electron";
+
 let electronLocalshortcut = require("electron-localshortcut");
+let AutoLaunch            = require("auto-launch");
 
 class Main {
 
@@ -33,8 +35,8 @@ class Main {
             skipTaskbar: true,
             minimizable: false,
             maximizable: false,
-            closable: (process.env.ELECTRON_ENV !== "production"),
-            resizable: (process.env.ELECTRON_ENV !== "production"),
+            closable: (process.env.ELECTRON_ENV === "development"),
+            resizable: false,
             movable: false,
             alwaysOnTop: true
         });
@@ -90,6 +92,9 @@ class Main {
     }
 
     private static moveWindow(): void {
+
+        Main.mainWindow.webContents.send("move-window");
+
         let cursorPos = screen.getCursorScreenPoint();
         let display = screen.getDisplayNearestPoint(cursorPos);
 
@@ -119,6 +124,23 @@ class Main {
         }
     }
 
+    private static enableAutoLaunch(): void {
+        let appAutoLauncher = new AutoLaunch({
+            name: "Clipboard App"
+        });
+
+        appAutoLauncher.isEnabled()
+        .then(function(isEnabled) {
+            if (isEnabled) {
+                return;
+            }
+            appAutoLauncher.enable();
+        })
+        .catch(function(err) {
+            // handle error
+        });
+    }
+
     static main(app: Electron.App, browserWindow: typeof BrowserWindow): void {
         Main.width = 300;
         Main.height = 400;
@@ -127,7 +149,11 @@ class Main {
         Main.application = app;
         Main.application.on("window-all-closed", Main.onWindowAllClosed);
         Main.application.on("ready", Main.onReady);
+
+        Main.enableAutoLaunch();
     }
+
+
 
 }
 

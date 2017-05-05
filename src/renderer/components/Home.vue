@@ -17,7 +17,6 @@ const ipcRenderer = require("electron").ipcRenderer;
 const Config = require('electron').remote.require("electron-config");
 const config = new Config();
 const defaultSettings = require("./../settings.json");
-console.log(defaultSettings.number);
 import Vue from "vue";
 export default {
     name: 'Home',
@@ -65,7 +64,10 @@ export default {
             this.indexSelected = index;
         },
         moveToIndex() {
-            document.getElementById("index-" + this.indexSelected).scrollIntoView(true);
+            var el = document.getElementById("index-" + this.indexSelected);
+            if (el) {
+                el.scrollIntoView(true);
+            }
         }
     },
     beforeMount() {
@@ -97,14 +99,23 @@ export default {
             this.copyToClipboard(this.texts[this.indexSelected], this.indexSelected);
         });
 
+        ipcRenderer.on("move-window", (event, arg) => {
+            this.indexSelected = 0;
+            this.moveToIndex();
+        });
+
+    },
+    beforeDestroy() {
+        ipcRenderer.removeAllListeners("up-action");
+        ipcRenderer.removeAllListeners("down-action");
+        ipcRenderer.removeAllListeners("enter-action");
     }
 }
 </script>
 
 <style lang="sass">
 .list-group-item {
-    &.selected,
-    &:hover {
+    &.selected {
         color: #fff;
         background-color: #116cd6;
     }
