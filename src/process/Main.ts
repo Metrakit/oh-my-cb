@@ -1,5 +1,5 @@
 import { client } from "electron-connect";
-import { app, BrowserWindow, clipboard, ipcMain, screen, globalShortcut } from "electron";
+import { app, BrowserWindow, clipboard, ipcMain, screen, globalShortcut, nativeImage  } from "electron";
 
 let electronLocalshortcut = require("electron-localshortcut");
 let AutoLaunch            = require("auto-launch");
@@ -10,7 +10,7 @@ class Main {
     static application: Electron.App;
     static BrowserWindow;
     static resourcesDir: string;
-    static lastText: string;
+    static lastContent: string;
 
     static width: number;
     static height: number;
@@ -59,8 +59,13 @@ class Main {
             }
         }, 500);
 
-        ipcMain.on("copy", (event, arg) => {
-            clipboard.writeText(arg);
+        ipcMain.on("copy", (event, content) => {
+            if (content.type == "image") {
+                let image = nativeImage.createFromDataURL(content.data);
+                clipboard.writeImage(image);
+            } else {
+                clipboard.writeText(content.data);
+            }
             Main.mainWindow.hide();
         });
 
@@ -117,10 +122,23 @@ class Main {
     }
 
     private static checkClipboard(): void {
-        let text = clipboard.readText();
-        if (Main.lastText !== text) {
-            Main.lastText = text;
-            Main.mainWindow.webContents.send("add-text", text);
+        let data = clipboard.readText();
+        let image = clipboard.readImage();
+        let dataToKeep = data;
+        let type = "text";
+
+        if ( ! image.isEmpty()) {
+            data = image.toDataURL();
+            dataToKeep = data.substring(0,8);
+            type = "image";
+        }
+
+        if (Main.lastContent !== dataToKeep) {
+            Main.lastContent = dataToKeep;
+            Main.mainWindow.webContents.send("add-content", {
+                data: data,
+                type: type
+            });
         }
     }
 

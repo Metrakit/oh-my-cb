@@ -3,8 +3,11 @@
     <div class="pane sidebar">
 
         <ul class="list-group">
-            <li v-on:mouseenter="hoverIndex(index)" v-bind:id="'index-' + index" v-bind:class="{ 'selected': index === indexSelected }" class="list-group-item" v-for="(text, index) in texts" v-on:click="copyToClipboard(text, index)">
-                <div class="media-body">{{ text }}</div>
+            <li v-on:mouseenter="hoverIndex(index)" v-bind:id="'index-' + index" v-bind:class="{ 'selected': index === indexSelected }" class="list-group-item" v-for="(content, index) in contents" v-on:click="copyToClipboard(content, index)">
+                <div v-if="content.type == 'image'" class="media-body">
+                    <img style="height: 80px; width: 80px;" v-bind:src="content.data">
+                </div>
+                <div v-else class="media-body">{{ content.data }}</div>
             </li>
         </ul>
 
@@ -22,25 +25,25 @@ export default {
     name: 'Home',
     data() {
         return {
-            texts: Array,
+            contents: Array,
             indexSelected: 0,
             maxLength: 0
         }
     },
     methods: {
-        addText(text) {
-            if (this.texts.length >= this.maxLength) {
+        addContent(content) {
+            if (this.contents.length >= this.maxLength) {
                 this.clean(1);
             }
-            this.texts.unshift(text);
-            config.set("items", this.texts);
+            this.contents.unshift(content);
+            config.set("items", this.contents);
         },
         clean(nbToReduce) {
-            let diff = (this.texts.length - this.maxLength) + nbToReduce;
+            let diff = (this.contents.length - this.maxLength) + nbToReduce;
             for (var i = 0; i < diff; i++) {
-                Vue.delete(this.texts, (this.texts.length - 1));
+                Vue.delete(this.contents, (this.contents.length - 1));
             }
-            config.set("items", this.texts);
+            config.set("items", this.contents);
         },
         copyToClipboard(content, index) {
             ipcRenderer.send("copy", content);
@@ -50,7 +53,7 @@ export default {
         },
         selectIndex(plus) {
             if (plus) {
-                if (this.indexSelected < (this.texts.length - 1)) {
+                if (this.indexSelected < (this.contents.length - 1)) {
                     this.indexSelected++;
                 }
             } else {
@@ -73,17 +76,17 @@ export default {
     beforeMount() {
         this.maxLength = config.has("number") ? config.get("number") : defaultSettings.number;
         this.indexSelected = 0;
-        this.texts = [];
+        this.contents = [];
 
         if (config.has("items") && config.get("items").length) {
-            this.texts = config.get("items");
+            this.contents = config.get("items");
         }
 
         this.clean(0);
 
-        ipcRenderer.on("add-text", (event, text) => {
-            if (text.length && text.trim() !== "") {
-                this.addText(text);
+        ipcRenderer.on("add-content", (event, content) => {
+            if (content.data && content.data.length && content.data.trim() !== "") {
+                this.addContent(content);
             }
         });
 
@@ -96,7 +99,7 @@ export default {
         });
 
         ipcRenderer.on("enter-action", (event, arg) => {
-            this.copyToClipboard(this.texts[this.indexSelected], this.indexSelected);
+            this.copyToClipboard(this.contents[this.indexSelected], this.indexSelected);
         });
 
         ipcRenderer.on("move-window", (event, arg) => {
