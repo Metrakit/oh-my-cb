@@ -1,4 +1,3 @@
-import { client } from "electron-connect";
 import { app, BrowserWindow, clipboard, ipcMain, screen, globalShortcut, nativeImage  } from "electron";
 
 let electronLocalshortcut = require("electron-localshortcut");
@@ -47,6 +46,7 @@ class Main {
         });
 
         if (process.env.ELECTRON_ENV === "development") {
+            let client = require("electron-connect").client;
             client.create(Main.mainWindow);
         }
 
