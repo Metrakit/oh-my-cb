@@ -7,7 +7,9 @@ var gulp = require("gulp"),
     env = require('gulp-env'),
     pck = require('./package.json'),
     winInstaller = require('electron-winstaller'),
-    createDMG = require('electron-installer-dmg');
+    createDMG = require('electron-installer-dmg'),
+    zip = require('gulp-zip'),
+    path = require('path');
     // debianInstaller = require('electron-installer-debian');
 
 var tsProject = ts.createProject("tsconfig.json");
@@ -19,14 +21,29 @@ var pckOptions = {
     dir: ".",
     name: pck.name,
     osxSign: true,
-    appVersion: pck.version
+    appVersion: pck.version,
+    ignore: function(filePath) {
+        if (/node_modules/.test(filePath)) {
+            if (/\/(obj|test.*?|spec.*?|htdocs|demo|example.*?|sample.*?)[\/$]/i.test(filePath)) {
+                return true;
+            }
+            if (/^(\..*|.*\.(sln|pdb|exp|lib|map|md|sh|gypi|gyp|h|cpp|xml|yml|html)|vcxproj.*|LICENSE|README|CONTRIBUTORS|vagrant|Dockerfile|Makefile)$/i.test(path.basename(filePath))) {
+                return true;
+            }
+        } else {
+            if (/\/(package|installer|.git)[\/$]/i.test(filePath)) {
+                return true;
+            }
+            console.log(filePath);
+        }
+    }
 };
 
 var metadata = {
     CompanyName: pck.author,
-    FileDescription: "Clipboard app",
+    FileDescription: "OhMyCB",
     OriginalFilename: pck.name,
-    ProductName: "Clipboard app",
+    ProductName: "OhMyCB",
     InternalName: pck.name
 };
 
@@ -45,6 +62,9 @@ function buildWinInstaller(arch) {
         loadingGif: `resources/loader-installer.gif`
     }).then(function() {
         console.log(`App installer builded for Windows ${arch}`);
+        gulp.src(`installer/${pck.name}-win32-${arch}/*`)
+            .pipe(zip(`${pck.name}-win32-${arch}.zip`))
+            .pipe(gulp.dest('installer'));
     });
 }
 
