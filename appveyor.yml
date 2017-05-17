@@ -19,7 +19,11 @@ artifacts:
 
 deploy:
   provider: GitHub
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  release: $(APPVEYOR_REPO_TAG_NAME)
   auth_token:
     secure: oGlL0p5rnTrUnPBN3bXwRr5u8QFsP0qKwIx3xTs8o68KxNBVbTBtujDXHeTU4aRw
   draft: true
   force_update: true
+  on:
+    appveyor_repo_tag: true
