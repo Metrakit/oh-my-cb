@@ -47,7 +47,7 @@
     "vue-template-compiler": "^2.2.6",
     "webpack": "^2.4.1",
     "vue": "^2.2.6",		
-     "vue-router": "^2.4.0"
+    "vue-router": "^2.4.0"
   },
   "dependencies": {
     "auto-launch": "^5.0.1",
