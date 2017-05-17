@@ -9,7 +9,8 @@ var gulp = require("gulp"),
     winInstaller = require('electron-winstaller'),
     createDMG = require('electron-installer-dmg'),
     zip = require('gulp-zip'),
-    path = require('path');
+    path = require('path'),
+    mkdirp = require('mkdirp');
     // debianInstaller = require('electron-installer-debian');
 
 var tsProject = ts.createProject("tsconfig.json");
@@ -75,7 +76,7 @@ function buildDarwinInstaller() {
         appPath: `package/${pck.name}-darwin-x64/${pck.name}.app`,
         icon: "resources/icon.ico",
         overwrite: true,
-        out: `installer/${pck.name}-darwin}`
+        out: path.join(__dirname, `installer/${pck.name}-darwin`)
     }, function(err) {
         if (err) {
             console.log(err);
@@ -154,7 +155,9 @@ gulp.task('package-darwin', ["build"], function () {
   pckOptions.platform = "darwin";
   packager(pckOptions, function done_callback (err, appPaths) {
       console.log("App packaged for OSX !");
-      buildDarwinInstaller();
+      mkdirp(`installer/${pck.name}-darwin`, function (err) {
+          buildDarwinInstaller();
+      });
   });
 });
 

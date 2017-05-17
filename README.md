@@ -2,7 +2,7 @@
 
 ## Setup
 
-`npm install`
+`yarn`
 
 ## Build executables
 

@@ -13,9 +13,11 @@ install:
   
 build_script:
   - npm run package-windows
+  - npm run package-darwin
 
 artifacts:
   - path: 'installer\*.zip'
+  - path: 'installer\**\*.dmg'
 
 version: 0.1.{build}
 skip_non_tags: true
