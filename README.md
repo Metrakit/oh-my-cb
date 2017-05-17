@@ -1,5 +1,7 @@
 # OhMyCB
 
+[![Build status](https://ci.appveyor.com/api/projects/status/piutybpe3n493wr9?svg=true)](https://ci.appveyor.com/project/Metrakit/oh-my-cb)
+
 ## Setup
 
 `yarn`
